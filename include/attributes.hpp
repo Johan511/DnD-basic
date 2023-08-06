@@ -68,20 +68,23 @@ private:
   std::uint8_t init = (1 << 7 - 1);
   Attributes::AttrIndex const PrimeRequisite;
 
-public:
-  template <typename PrimReqTy> constexpr AttributeManager(PrimReqTy) {
+  template <typename PrimReqTy>
+  constexpr Attributes::AttrIndex get_PrimeRequisite(PrimReqTy) {
     // no branching due to constexpr
     if constexpr (std::is_same<abilities::Strength, PrimReqTy>::value)
-      PrimeRequisite = static_cast<Attributes::AttrIndex>(Attributes::STRENGTH);
+      return static_cast<Attributes::AttrIndex>(Attributes::STRENGTH);
 
     else if constexpr (std::is_same<abilities::Intelligence, PrimReqTy>::value)
-      PrimeRequisite =
-          static_cast<Attributes::AttrIndex>(Attributes::INTELLIGENCE);
+      return static_cast<Attributes::AttrIndex>(Attributes::INTELLIGENCE);
 
     else if constexpr (std::is_same<abilities::Dexterity, PrimReqTy>::value)
-      PrimeRequisite =
-          static_cast<Attributes::AttrIndex>(Attributes::DEXTERITY);
+      return static_cast<Attributes::AttrIndex>(Attributes::DEXTERITY);
   }
+
+public:
+  template <typename PrimReqTy>
+  constexpr AttributeManager(PrimReqTy x)
+      : PrimeRequisite(get_PrimeRequisite(x)) {}
 
   /////////////////////////////////////////////////////
 
@@ -115,7 +118,7 @@ public:
   }
   void set_prime_req(AttrNumTy x) { set_idx(PrimeRequisite, x); }
 
-  /////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////
 
   AttrNumTy get_idx(Attributes::AttrIndex idx) const {
     return attr.attributes[idx];

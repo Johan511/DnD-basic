@@ -15,7 +15,8 @@ protected:
 
   std::vector<Item> items;
 
-  Charectar(std::string &&name_) : name(std::move(name)){};
+  Charectar(std::string &&name_, std::string &&gender_)
+      : name(std::move(name)), gender(std::move(gender_)){};
 
 public:
   std::string const &get_name() { return name; }

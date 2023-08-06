@@ -1,3 +1,4 @@
+#include "./rng.hpp"
 #include <cstdint>
 #include <string>
 
@@ -5,7 +6,6 @@
 
 using AttrNumTy = int;
 
-typedef enum RollTy_ { ONE, TWO, THREE, FOUR, FIVE, SIX } RollTy;
 constexpr RollTy RollMaxSize = static_cast<RollTy>(6);
 
 namespace abilities {

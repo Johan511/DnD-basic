@@ -1,22 +1,41 @@
 #include "../include/attributes.hpp"
 #include "../include/items.hpp"
+#include "../include/rng.hpp"
 
+#include <functional>
 #include <iostream>
 #include <random>
 #include <string>
 #include <vector>
 
-template <typename ClassTy> class Charectar {
+template <typename ClassTy, typename DerivedCharecter> class Charectar {
 protected:
   using Class = ClassTy;
+  using HealthTy = int;
+  static constexpr ItemCostTy GOLD_MULTIPLIER = static_cast<ItemCostTy>(10);
 
+  //////////////////////////
   std::string const name;
   std::string const gender;
+  //////////////////////////
 
+  //////////////////////////
   std::vector<Item> items;
+  ItemCostTy gold;
+  HealthTy health = 0;
+  HealthTy maxHealth;
 
-  Charectar(std::string &&name_, std::string &&gender_)
-      : name(std::move(name)), gender(std::move(gender_)){};
+  //////////////////////////
+
+  // modifiers
+  std::vector<std::function<double(DerivedCharecter const &)>> dmgModifiers;
+
+  Charectar(std::string &&name_, std::string &&gender_, HealthTy maxHealth_)
+      : name(std::move(name_)), gender(std::move(gender_)),
+        maxHealth(maxHealth_) {
+    health = roll(maxHealth);
+    gold = GOLD_MULTIPLIER * multiple_rolls(3, 6, 1);
+  };
 
 public:
   std::string const &get_name() { return name; }
@@ -27,24 +46,32 @@ public:
 // any weapon/armour => magic too, but no other sort of magic
 // as they increase in level => harder to kill (increase their hit dice)
 // increased ability to get hits at lvl >= 4
-class FightingMan : public Charectar<classes::Fighter> {};
-
-// humans who elect to become
-// magic-users must not wear armor and can carry only a
-// dagger for protection, use any magic item
-// only one spell at low levels, 2 at higher level
-class MagicMan : public Charectar<classes::MagicUser> {};
-
-// nothing stronger than leather armor and can not carry shields
-// all the weapons of a fighting man including magic swords and magic daggers.
-// lvl >= 3 can read 80% stuff
-class Theif : public Charectar<classes::Thief> {};
+class FightingMan : public Charectar<classes::Fighter, FightingMan> {
+  FightingMan(std::string &&name, std::string gender)
+      : Charectar<classes::Fighter, FightingMan>(std::move(name),
+                                                 std::move(gender), 8) {}
+};
 
 // resistant to magicm, better saving throws against magical attack.
 // 60ft night vision
 // construction time is 1/3
 // only one who can wield +3 magic war hammer
-class Dwarf : public Charectar<classes::Fighter> {};
+class Dwarf : public Charectar<classes::Fighter, Dwarf> {
+public:
+  Dwarf(std::string &&name, std::string gender)
+      : Charectar<classes::Fighter, Dwarf>(std::move(name), std::move(gender),
+                                           8) {}
+};
+
+// humans who elect to become
+// magic-users must not wear armor and can carry only a
+// dagger for protection, use any magic item
+// only one spell at low levels, 2 at higher level
+class MagicMan : public Charectar<classes::MagicUser, MagicMan> {
+  MagicMan(std::string &&name, std::string gender)
+      : Charectar<classes::MagicUser, MagicMan>(std::move(name),
+                                                std::move(gender), 6) {}
+};
 
 // can use all the weapons and armor, including magic ones
 // can cast all spells
@@ -54,7 +81,20 @@ class Dwarf : public Charectar<classes::Fighter> {};
   magic-users, but since each game nets them experience in both categories
   equally, they progress more slowly than other characters
 */
-class Elf : public Charectar<classes::MagicUser> {};
+class Elf : public Charectar<classes::MagicUser, Elf> {
+  Elf(std::string &&name, std::string gender)
+      : Charectar<classes::MagicUser, Elf>(std::move(name), std::move(gender),
+                                           6) {}
+};
+
+// nothing stronger than leather armor and can not carry shields
+// all the weapons of a fighting man including magic swords and magic daggers.
+// lvl >= 3 can read 80% stuff
+class Theif : public Charectar<classes::Thief, Theif> {
+  Theif(std::string &&name, std::string gender)
+      : Charectar<classes::Thief, Theif>(std::move(name), std::move(gender),
+                                         6) {}
+};
 
 // TODO Cleric
 // TODO halfling

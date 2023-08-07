@@ -1,5 +1,6 @@
 #include "../include/charecter.hpp"
 #include <array>
+#include <iostream>
 #include <memory>
 
 using MatrixSize = int;
@@ -8,8 +9,9 @@ static constexpr MatrixSize N = static_cast<MatrixSize>(1000);
 
 class Wall : public Entity {
 public:
-  Wall(MatrixSize x, MatrixSize y)
-      : Entity(std::to_string(x) + "_" + std::to_string(y)){};
+  MatrixSize x, y;
+  Wall(MatrixSize x_, MatrixSize y_)
+      : x(x_), y(y_), Entity(std::to_string(x_) + "_" + std::to_string(y_)){};
 };
 
 class Dungeon {
@@ -67,6 +69,11 @@ public:
   }
 
   ~Dungeon() {
+    std::destroy(WallArray1, WallArray1 + N + 2);
+    std::destroy(WallArray2, WallArray2 + N + 2);
+    std::destroy(WallArray3, WallArray3 + N + 2);
+    std::destroy(WallArray4, WallArray4 + N + 2);
+
     free(WallArray1);
     free(WallArray2);
     free(WallArray3);

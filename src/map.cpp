@@ -20,7 +20,7 @@ class Dungeon {
   Wall *WallArray3 = nullptr;
   Wall *WallArray4 = nullptr;
   //(0, _), (N+1, _), (_, 0), (N+1, _) are walls by default
-  std::array<std::array<std::unique_ptr<Entity>, N + 2>, N + 2> matrix;
+  std::array<std::array<Entity *, N + 2>, N + 2> matrix;
 
 public:
   constexpr Dungeon() {
@@ -37,8 +37,8 @@ public:
     for (MatrixSize i = 0; i < N + 2; i++) {
       std::construct_at(static_cast<Wall *>(std::addressof(WallArray1[i])), 0,
                         i);
-      std::construct_at(static_cast<Wall *>(std::addressof(WallArray3[i])), 0,
-                        N + 1);
+      std::construct_at(static_cast<Wall *>(std::addressof(WallArray3[i])),
+                        N + 1, i);
 
       std::construct_at(static_cast<Wall *>(std::addressof(WallArray2[i])), i,
                         0);
@@ -48,24 +48,24 @@ public:
 
     //(0, _), (N+1, _), (_, 0), (N+1, _) are walls by default
     for (MatrixSize i = 0; i < N + 2; i++) {
-      matrix[0][i] = std::make_unique<Wall>(WallArray1[i]);
-      matrix[0][N + 1] = std::make_unique<Wall>(WallArray3[i]);
-      matrix[i][0] = std::make_unique<Wall>(WallArray2[i]);
-      matrix[i][N + 1] = std::make_unique<Wall>(WallArray4[i]);
+      matrix[0][i] = WallArray1 + i;
+      matrix[0][N + 1] = WallArray3 + i;
+      matrix[i][0] = WallArray2 + i;
+      matrix[i][N + 1] = WallArray4 + i;
     }
 
     for (MatrixSize i = 1; i < N + 1; i++) {
-      for (MatrixSize j = 1; j < N + 1; j++) {
+      for (MatrixSize j = 1; j < N + 1; j++)
         matrix[i][j] = nullptr;
-      }
     }
   }
 
-  bool add_entity(MatrixSize x, MatrixSize y, std::unique_ptr<Entity> &&uptr) {
+  bool add_entity(MatrixSize x, MatrixSize y, Entity *ptr) {
     if (matrix[x][y] != nullptr)
       return false;
 
-    matrix[x][y] = std::move(uptr);
+    matrix[x][y] = ptr;
+    return true;
   }
 
   ~Dungeon() {
@@ -78,7 +78,16 @@ public:
     free(WallArray2);
     free(WallArray3);
     free(WallArray4);
+
+    for (MatrixSize i = 1; i < N + 1; i++) {
+      for (MatrixSize j = 1; j < N + 1; j++) {
+        delete matrix[i][j];
+      }
+    }
   }
 };
 
-int main() { Dungeon(); }
+int main() {
+  Dungeon d;
+  d.add_entity(10, 10, new Wall(10, 10));
+}

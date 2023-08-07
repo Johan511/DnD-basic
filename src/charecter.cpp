@@ -92,8 +92,3 @@ class Theif : public Charectar<classes::Thief, Theif> {
 
 // TODO Cleric
 // TODO halfling
-
-int main() {
-  AttributeManager a(abilities::Strength{});
-  return 0;
-}

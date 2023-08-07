@@ -12,7 +12,7 @@
 
 class Entity {
 protected:
-  std::string const name;
+  std::string const name = "";
   Entity(std::string &&name_) : name(std::move(name_)){};
-  Entity() : name(""){};
+  Entity() : name("_"){};
 };

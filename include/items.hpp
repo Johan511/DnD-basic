@@ -1,3 +1,5 @@
+#pragma once
+
 using ItemCostTy = int;
 
 class Item {

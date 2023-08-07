@@ -1,5 +1,7 @@
 #include <random>
 
+#pragma once
+
 using RollTy = int;
 
 // both min and max are inclusive

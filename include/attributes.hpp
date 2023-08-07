@@ -24,7 +24,6 @@ class Fighter {
 public:
   static const std::string className;
 };
-const std::string Fighter::className = "Fighter";
 
 class MagicUser {
   using PrimeRequisite = abilities::Intelligence;
@@ -32,7 +31,6 @@ class MagicUser {
 public:
   static const std::string className;
 };
-const std::string MagicUser::className = "MagicUser";
 
 class Thief {
   using PrimeRequisite = abilities::Dexterity;
@@ -40,7 +38,6 @@ class Thief {
 public:
   static const std::string className;
 };
-const std::string Thief::className = "Thief";
 
 }; // namespace classes
 

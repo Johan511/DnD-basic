@@ -1,21 +1,16 @@
-#include "../include/attributes.hpp"
-#include "../include/items.hpp"
-#include "../include/rng.hpp"
+#include "../include/charecter.hpp"
 
-#include <functional>
-#include <iostream>
-#include <random>
-#include <string>
-#include <vector>
+std::string const classes::Fighter::className = "Fighter";
+std::string const classes::MagicUser::className = "MagicUser";
+std::string const classes::Thief::className = "Thief";
 
-template <typename ClassTy, typename DerivedCharecter> class Charectar {
+template <typename Class, typename DerivedCharecter>
+class Charectar : public Entity {
 protected:
-  using Class = ClassTy;
   using HealthTy = int;
   static constexpr ItemCostTy GOLD_MULTIPLIER = static_cast<ItemCostTy>(10);
 
   //////////////////////////
-  std::string const name;
   std::string const gender;
   //////////////////////////
 
@@ -24,14 +19,13 @@ protected:
   ItemCostTy gold;
   HealthTy health = 0;
   HealthTy maxHealth;
-
   //////////////////////////
 
   // modifiers
   std::vector<std::function<double(DerivedCharecter const &)>> dmgModifiers;
 
   Charectar(std::string &&name_, std::string &&gender_, HealthTy maxHealth_)
-      : name(std::move(name_)), gender(std::move(gender_)),
+      : Entity(std::move(name_)), gender(std::move(gender_)),
         maxHealth(maxHealth_) {
     health = roll(maxHealth);
     gold = GOLD_MULTIPLIER * multiple_rolls(3, 6, 1);

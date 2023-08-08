@@ -60,3 +60,8 @@ bool Dungeon::add_entity(MatrixSize x, MatrixSize y, Entity *ptr) {
   matrix[x][y] = ptr;
   return true;
 }
+
+// returns true if empty
+bool Dungeon::is_empty(MatrixSize x, MatrixSize y) {
+  return matrix[x][y].name == "";
+}
